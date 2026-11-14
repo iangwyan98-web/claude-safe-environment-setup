@@ -1,0 +1,102 @@
+project:
+  name: "克劳德安全环境搭建"
+  repository: "claude-safe-environment-setup"
+  purpose: "在官方支持范围内，安全准备并验收 Claude 网页端与 CLI"
+  evidence_status: "待验证"
+  claim_policy: "只有完成本设备的端到端验收并留下可复核记录，才可标记为实测有效"
+
+principles:
+  - "仅在 Claude 官方支持的地区及官方规则允许的范围内使用"
+  - "只从 Anthropic 官方文档或官方发行渠道获取安装和授权说明"
+  - "先只读检查；任何安装、系统配置修改、文件清理或授权操作前说明影响并取得用户明确同意"
+  - "登录、验证码、CAPTCHA、KYC、条款确认和付款由用户本人在官方界面完成"
+  - "不得绕过地区限制、身份验证、CAPTCHA、安全防护或反滥用检查"
+  - "不得要求用户提供密码、验证码、会话令牌、API 密钥或支付资料"
+  - "不得在日志、聊天或普通文档中保存秘密"
+  - "支付结果不明时先核对订单和扣款，不得重复提交"
+  - "网页端与 CLI 的登录、订阅状态和实际请求分别验证"
+
+phases:
+  - id: environment_inventory
+    name: "环境盘点（只读）"
+    steps:
+      - "记录操作系统及版本、Shell、浏览器、网络状态"
+      - "检查相关 CLI 是否已安装及其版本；不读取凭据文件或秘密环境变量"
+      - "给出发现、风险和下一步计划"
+    pass_criteria:
+      - "环境信息已记录，且未读取或暴露秘密"
+    failure_handling:
+      - "无法确定的信息标记为未知，不猜测"
+
+  - id: official_access
+    name: "官方访问与账号登录"
+    steps:
+      - "使用浏览器访问 Claude 官方网站并观察页面状态"
+      - "使用用户本人长期可访问的邮箱，按官方页面流程登录或注册"
+      - "用户本人完成需要的安全验证"
+    pass_criteria:
+      - "Claude 页面确认处于已登录状态"
+    failure_handling:
+      - "将安全验证、地区不支持或身份验证要求交由用户按官方流程处理"
+      - "不得使用公开临时邮箱，不得尝试绕过验证"
+
+  - id: optional_subscription
+    name: "订阅确认（可选）"
+    optional: true
+    steps:
+      - "若用户确实需要付费功能，查看官方页面显示的方案、币种、金额、税费、计费周期及续费条件"
+      - "用户核对本人或获授权的支付方式和真实账单信息，并由用户本人提交付款"
+    pass_criteria:
+      - "账号页面明确显示所需订阅状态"
+    failure_handling:
+      - "若已扣款但未生效，保存订单编号并联系官方支持，不重复付款"
+      - "若结果不明，先核对订单和扣款记录"
+
+  - id: cli_installation_and_auth
+    name: "CLI 官方安装与授权"
+    steps:
+      - "先核对 Anthropic 官方文档中的 CLI 名称、系统要求、安装方法和账号授权方式"
+      - "把将要执行的安装命令和影响展示给用户；等待用户同意后再安装"
+      - "按官方流程通过已登录的同一 Claude 账号授权；授权凭据不得复制进聊天或日志"
+    pass_criteria:
+      - "CLI 明确显示授权成功，且账号与预期一致"
+    failure_handling:
+      - "按安装、网络、授权、账号权限等类别解释错误"
+      - "不输出或请求令牌、密码、验证码等秘密"
+
+  - id: end_to_end_verification
+    name: "端到端验收"
+    steps:
+      - "网页端发送一条不含敏感信息的普通测试请求"
+      - "CLI 发送一条不含敏感信息的普通测试请求"
+      - "单独核对订阅状态（仅当订阅是本次目标时）"
+      - "记录检查时间、软件版本、结果和脱敏错误摘要"
+    pass_criteria:
+      - "网页端普通请求收到有效回复"
+      - "CLI 普通请求收到有效回复"
+      - "若本次包含订阅，账号页面显示目标订阅状态"
+    failure_handling:
+      - "区分网络、登录授权、账号状态、订阅与额度问题"
+      - "一次失败只根据明确错误采取下一步，不重复付款或盲目改环境"
+
+evidence_record:
+  device_and_os: "待记录"
+  browser_version: "待记录"
+  cli_name_and_version: "待记录"
+  account_login: "待验证"
+  subscription_if_applicable: "不适用或待验证"
+  web_request: "待验证"
+  cli_authorization: "待验证"
+  cli_request: "待验证"
+  tested_at: "待记录"
+  notes: "只填写脱敏信息；不记录密码、令牌、验证码或支付卡资料"
+
+completion:
+  status: "未实测"
+  required_checks:
+    - "浏览器已登录"
+    - "网页端实际请求成功"
+    - "CLI 已按官方方式授权"
+    - "CLI 实际请求成功"
+    - "如本次目标包含订阅，订阅状态已在账号页面确认"
+  allowed_success_claim: "仅在所有适用检查均已完成并记录后，描述为本设备本次验收通过；不得泛化为对其他设备或账号的保证"
